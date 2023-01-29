@@ -1,3 +1,4 @@
 *.bak
 *.php2
 \nppBackup
+dev-*
