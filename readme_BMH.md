@@ -1,5 +1,5 @@
 Changes to payment_module_fee 1.1.0 to make Version 2.0.0
-Compatible with Zen Cart 157d 158 and PHP7.4 PHP8.1
+Compatible with Zen Cart 157d 158 and PHP7.4 PHP8.2
 ===================================================
 BMH 2020-11-06 update for PHP 7.4
 BMH update 2022-02-24
