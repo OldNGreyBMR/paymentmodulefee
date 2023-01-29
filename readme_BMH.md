@@ -17,3 +17,4 @@ BMH 2022-10-01  ln60 Undefined index: payment => conditional branch on line 60
 BMH 2022-10-01  zc158 lang file in includes\languages\english\modules\order_total
 BMH 2023-01-28  ln20 define MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER
 BMH 2023-01-28  ln22 MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES
+BMH 2023-01-30 PHP8.2 declared all class variables
