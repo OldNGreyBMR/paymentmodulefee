@@ -6,7 +6,7 @@
  * @copyright Copyright 2003-2023 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: ot_paymentmodulefee.php V2.0.1 BMH (OldNGreY) 2023-01-30
+ * @version $Id: ot_paymentmodulefee.php zc158 PHP8.2 V2.0.1 BMH (OldNGreY) 2023-01-31
  */ 
  
  if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER')) { 
@@ -17,54 +17,23 @@
  }
   
   class ot_paymentmodulefee {
-      
-    public $charge_it;
-    /**
-     * $_check is used to check the configuration key set up
-     * @var int
-     */
-    public $_check;
+    public $check_query;            // 
+    public $code;                   // $code determines the internal 'code' name used to designate "this" payment module
+    public $description;            // $description is a soft name for this payment method  @var string 
+    public $output =[];             // $output is an array of the display elements used on checkout pages
+    public $pass;                   // $pass configuration check
+    public $payment_fee;            // $payment_fee payment fee applied
+    public $payment_fees;           // $payment_fees all payment fees
+    public $payment_module_fee;     // $payment_module_fee is the cost of the fee or discount
+    public $payment_modules =[];    // $payment_modules is an array of available peyment modules 
+    public $payment_subtotal_plus_shipping; //
+    public $sort_order;             // $sort_order is the order priority of this payment module when displayed  @var int
+    public $title;                  // $title is the displayed name for this order total method  @var string
+    public $tax;                    // 
+    public $tax_address;            // 
+    public $tax_description;        // 
 
-    public $check_query;
-    /**
-     * $code determines the internal 'code' name used to designate "this" order total module
-     * @var string
-     */
-    public $code;
-
-    /**
-     * $header the module box header 
-     * @var string
-     */
-    public $description;
-
-    public $key;
-    /**
-     * $output is an array of the display elements used on checkout pages
-     * @var array
-     */
-    public $output = [];
-    public $pass;
-    public $payment_fee;
-    public $payment_fees = [];
-    public $payment_module_fee;
-    public $payment_modules;
-    public $payment_subtotal_plus_shipping;
-    /**
-     * $sort_order is the order priority of this order total module when displayed
-     * @var int
-     */
-    public $sort_order;
-    public $tax;
-    public $tax_address;
-    public $tax_description;
-    /**
-     * $title is the displayed name for this order total method
-     * @var string
-     */
-    public $title;
-
-
+    protected $_check;              // $_check is used to check the configuration key set up @var int
 
 	function __construct() {
       $this->code = 'ot_paymentmodulefee';
@@ -72,7 +41,7 @@
       $this->description = MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_DESCRIPTION;
       $this->sort_order = MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER;
       $this->payment_modules = explode(',', MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES); 
-      $this->output = array();
+      $this->output = [];
       $payment_module_fee = '';     
     }
 
