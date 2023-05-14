@@ -6,10 +6,11 @@
  * @copyright Copyright 2003-2023 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: ot_paymentmodulefee.php zc158 PHP8.2 V2.0.2 BMH (OldNGreY) 2023-05-14
+ * @version $Id: ot_paymentmodulefee.php zc158 PHP8.2 V2.0.2a BMH (OldNGreY) 2023-05-14
  */
  //BMH 2023-02-15  Undefined variable: pass
-// BMH 2023-05-14  include coupons and group discount; added version fro admin display
+// BMH 2023-05-14  include coupons and group discount; added version for admin display
+// BMH 2023-05-15  initialise group_discountfee
 
  if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER')) {
     define('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER', '') ;
@@ -17,7 +18,7 @@
  if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES')) {
      define('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES', '') ;
  }
-if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.2');}
+if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.2a');}
 
   class ot_paymentmodulefee {
     public $check_query;            //
@@ -50,6 +51,7 @@ if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.2');}
       $this->output = [];
       $payment_module_fee = '';
       $key = '';
+      $group_discountfee = 0;       // initialise fee amount
     }
 
     function process() {
@@ -112,8 +114,8 @@ if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.2');}
                     }
                 }
 
-                // product + postage = group discount - discount coupon
-                if (isset($order->info['coupon_code'])) {
+                // product + postage - group_discount - discount_coupon
+                if ( (isset($order->info['coupon_code']))  && (isset($order->info['coupon_amount'])) ) {
                     $payment_subtotal_plus_shipping_plus_coupon = $order->info['subtotal'] + $order->info['shipping_cost'] - $group_discountfee - $order->info['coupon_amount'];
 
                     $payment_module_fee = ($payment_subtotal_plus_shipping_plus_coupon * ((int)$this->payment_fee/100));

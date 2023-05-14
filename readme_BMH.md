@@ -1,4 +1,4 @@
-Version 2.0.2
+Version 2.0.2a
 =============
 Compatible with Zen Cart 157d and ZC158a and PHP7.4 to PHP8.2
 Added version number to admin display
