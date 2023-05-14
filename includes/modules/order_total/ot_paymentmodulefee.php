@@ -6,48 +6,55 @@
  * @copyright Copyright 2003-2023 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: ot_paymentmodulefee.php zc158 PHP8.2 V2.0.1 BMH (OldNGreY) 2023-01-31
- */ 
- 
- if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER')) { 
+ * @version $Id: ot_paymentmodulefee.php zc158 PHP8.2 V2.0.2 BMH (OldNGreY) 2023-05-14
+ */
+ //BMH 2023-02-15  Undefined variable: pass
+// BMH 2023-05-14  include coupons and group discount; added version fro admin display
+
+ if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER')) {
     define('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER', '') ;
  }
  if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES')) {
      define('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES', '') ;
  }
-  
+if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.2');}
+
   class ot_paymentmodulefee {
-    public $check_query;            // 
+    public $check_query;            //
     public $code;                   // $code determines the internal 'code' name used to designate "this" payment module
-    public $description;            // $description is a soft name for this payment method  @var string 
+    public $description;            // $description is a soft name for this payment method  @var string
+    public $group_discountfee;      // $group_discountfee  local name for group discount
     public $output =[];             // $output is an array of the display elements used on checkout pages
-    public $pass;                   // $pass configuration check
+    //public $pass;                   // $pass configuration check
     public $payment_fee;            // $payment_fee payment fee applied
     public $payment_fees;           // $payment_fees all payment fees
     public $payment_module_fee;     // $payment_module_fee is the cost of the fee or discount
-    public $payment_modules =[];    // $payment_modules is an array of available peyment modules 
+    public $payment_modules =[];    // $payment_modules is an array of available peyment modules
     public $payment_subtotal_plus_shipping; //
+    public $payment_subtotal_plus_shipping_plus_coupon; //
     public $sort_order;             // $sort_order is the order priority of this payment module when displayed  @var int
     public $title;                  // $title is the displayed name for this order total method  @var string
-    public $tax;                    // 
-    public $tax_address;            // 
-    public $tax_description;        // 
+    public $tax;                    //
+    public $tax_address;            //
+    public $tax_description;        //
 
     protected $_check;              // $_check is used to check the configuration key set up @var int
+
 
 	function __construct() {
       $this->code = 'ot_paymentmodulefee';
       $this->title = MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_TITLE;
-      $this->description = MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_DESCRIPTION;
+      $this->description = MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_DESCRIPTION . ' V' . VERSION_PMF;
       $this->sort_order = MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER;
-      $this->payment_modules = explode(',', MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES); 
+      $this->payment_modules = explode(',', MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES);
       $this->output = [];
-      $payment_module_fee = '';     
+      $payment_module_fee = '';
+      $key = '';
     }
 
     function process() {
-      global $order, $currencies;
-
+      global $order, $currencies, $ot_group_pricing, $order_totals, $ot_total;
+      global $pass;  // BMH for dirbankusa
 
       if (MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_FEE_ALLOW == 'true') {
         switch (MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_DESTINATION) {
@@ -60,8 +67,8 @@
           default:
             $pass = false; break;
         }
-        
-        if ($pass == true) {  
+
+        if ($pass == true) {
           if (MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_MIN > 0) {
             if (MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_MIN > $order->info['subtotal']) {
               $pass = true;
@@ -72,9 +79,9 @@
             $pass = true;
           }
         }
-        if (isset($_SESSION['payment'])) {  // BMH continue as payment type selected avoids PHP 8.0 error      
-        
-            if (($pass  == true) && in_array($_SESSION['payment'], $this->payment_modules)) { // BMH 
+        if (isset($_SESSION['payment'])) {  // BMH continue as payment type selected avoids PHP 8.0 error
+
+            if (($pass  == true) && in_array($_SESSION['payment'], $this->payment_modules)) { // BMH
           $charge_it = 'true';
           if ($charge_it == 'true') {
             $tax_address = zen_get_tax_locations();
@@ -82,21 +89,42 @@
             $tax = zen_get_tax_rate(MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_TAX_CLASS, $tax_address['country_id'], $tax_address['zone_id']);
 
             $tax_description = zen_get_tax_description(MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_TAX_CLASS, $tax_address['country_id'], $tax_address['zone_id']);
-            
+
             $key = array_search($_SESSION['payment'], $this->payment_modules);
 
             $this->payment_fees = explode(',', MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_FEE);
-            $this->payment_fee = $this->payment_fees[$key]; 
+            $this->payment_fee = $this->payment_fees[$key];
             // calculate from flat fee or percentage
             if (substr($this->payment_fee, -1) == '%') {
-              $payment_subtotal_plus_shipping = $order->info['subtotal'] + $order->info['shipping_cost']; 
-              $payment_module_fee = ($payment_subtotal_plus_shipping * ((int)$this->payment_fee/100)); 
-             
+                /* check subtotals */
+
+                // product + postage
+                $payment_subtotal_plus_shipping = $order->info['subtotal'] + $order->info['shipping_cost'];
+                $payment_module_fee = ($payment_subtotal_plus_shipping * ((int)$this->payment_fee/100));
+
+                //product + postage - group discounts
+                if (isset($ot_group_pricing->output )) {
+                    if (isset($ot_group_pricing->output[0]['value'])){
+                    $group_discountfee = $ot_group_pricing->output[0]['value'];
+                    $payment_subtotal_plus_shipping_plus_coupon = $order->info['subtotal'] + $order->info['shipping_cost'] - $group_discountfee;
+                    $payment_module_fee = ($payment_subtotal_plus_shipping_plus_coupon * ((int)$this->payment_fee/100));
+
+                    }
+                }
+
+                // product + postage = group discount - discount coupon
+                if (isset($order->info['coupon_code'])) {
+                    $payment_subtotal_plus_shipping_plus_coupon = $order->info['subtotal'] + $order->info['shipping_cost'] - $group_discountfee - $order->info['coupon_amount'];
+
+                    $payment_module_fee = ($payment_subtotal_plus_shipping_plus_coupon * ((int)$this->payment_fee/100));
+
+                }
+
             } else {
               $payment_module_fee = $this->payment_fee;
             }
-            $order->info['tax'] += zen_calculate_tax($payment_module_fee, $tax);    
-            
+            $order->info['tax'] += zen_calculate_tax($payment_module_fee, $tax);
+
             if ($tax_description != TEXT_UNKNOWN_TAX_RATE) { // BMH TEXT_UNKNOWN_TAX_RATE value set to 'Sales Tax' returned by function
                 $order->info['tax_groups']["$tax_description"] += zen_calculate_tax($payment_module_fee, $tax);
                 }
