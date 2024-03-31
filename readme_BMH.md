@@ -1,8 +1,10 @@
-Version 2.0.2a
+Version 2.0.3
 =============
 Compatible with Zen Cart 157d and ZC158a and PHP7.4 to PHP8.2
 Added version number to admin display
 includes group discounts and coupon credit notes
+BMH 2024-04-01 change (int) to (float) to allow discount amount < 1
+
 
 Changes to payment_module_fee 1.1.0 to make Version 2.0.0
 Compatible with Zen Cart 157d 158 and PHP7.4 to PHP8.2
@@ -24,3 +26,4 @@ BMH 2022-10-01  zc158 lang file in includes\languages\english\modules\order_tota
 BMH 2023-01-28  ln20 define MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER
 BMH 2023-01-28  ln22 MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES
 BMH 2023-01-30 PHP8.2 declared all class variables
+
