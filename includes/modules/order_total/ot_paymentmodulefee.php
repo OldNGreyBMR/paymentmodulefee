@@ -6,11 +6,12 @@
  * @copyright Copyright 2003-2023 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: ot_paymentmodulefee.php zc158 PHP8.2 V2.0.2a BMH (OldNGreY) 2023-05-14
+ * @version $Id: ot_paymentmodulefee.php zc158 PHP8.2 V2.0.3 BMH (OldNGreY) 2024-04-01
  */
  //BMH 2023-02-15  Undefined variable: pass
 // BMH 2023-05-14  include coupons and group discount; added version for admin display
 // BMH 2023-05-15  initialise group_discountfee
+// BMH 2024-04-01 ln105, 112, 121 change (int) to (float) to allow discount amt < 1
 
  if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER')) {
     define('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER', '') ;
@@ -18,7 +19,7 @@
  if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES')) {
      define('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES', '') ;
  }
-if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.2a');}
+if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.3');}
 
   class ot_paymentmodulefee {
     public $check_query;            //
@@ -83,7 +84,7 @@ if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.2a');}
         }
         if (isset($_SESSION['payment'])) {  // BMH continue as payment type selected avoids PHP 8.0 error
 
-            if (($pass  == true) && in_array($_SESSION['payment'], $this->payment_modules)) { // BMH
+          if (($pass  == true) && in_array($_SESSION['payment'], $this->payment_modules)) { // BMH
           $charge_it = 'true';
           if ($charge_it == 'true') {
             $tax_address = zen_get_tax_locations();
@@ -102,14 +103,16 @@ if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.2a');}
 
                 // product + postage
                 $payment_subtotal_plus_shipping = $order->info['subtotal'] + $order->info['shipping_cost'];
-                $payment_module_fee = ($payment_subtotal_plus_shipping * ((int)$this->payment_fee/100));
+                // BMH 2024-04-01 $payment_module_fee = ($payment_subtotal_plus_shipping * ((int)$this->payment_fee/100));
+                $payment_module_fee = ($payment_subtotal_plus_shipping * ((float)$this->payment_fee/100));
 
                 //product + postage - group discounts
                 if (isset($ot_group_pricing->output )) {
                     if (isset($ot_group_pricing->output[0]['value'])){
                     $group_discountfee = $ot_group_pricing->output[0]['value'];
                     $payment_subtotal_plus_shipping_plus_coupon = $order->info['subtotal'] + $order->info['shipping_cost'] - $group_discountfee;
-                    $payment_module_fee = ($payment_subtotal_plus_shipping_plus_coupon * ((int)$this->payment_fee/100));
+                    // BMH 2024-04-01 $payment_module_fee = ($payment_subtotal_plus_shipping_plus_coupon * ((int)$this->payment_fee/100));
+                    $payment_module_fee = ($payment_subtotal_plus_shipping_plus_coupon * ((float)$this->payment_fee/100));
 
                     }
                 }
@@ -118,7 +121,8 @@ if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.2a');}
                 if ( (isset($order->info['coupon_code']))  && (isset($order->info['coupon_amount'])) ) {
                     $payment_subtotal_plus_shipping_plus_coupon = $order->info['subtotal'] + $order->info['shipping_cost'] - $group_discountfee - $order->info['coupon_amount'];
 
-                    $payment_module_fee = ($payment_subtotal_plus_shipping_plus_coupon * ((int)$this->payment_fee/100));
+                    // BMH 2024-04-01$payment_module_fee = ($payment_subtotal_plus_shipping_plus_coupon * ((int)$this->payment_fee/100));
+                    $payment_module_fee = ($payment_subtotal_plus_shipping_plus_coupon * ((float)$this->payment_fee/100));
 
                 }
 
