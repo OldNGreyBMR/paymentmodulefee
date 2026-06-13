@@ -1,28 +1,15 @@
-Version 2.0.4
-=============
-Encapsulated version only. Compatible with Zen Cart 1.5.8a to 2.2.2; PHP 8.2 to 8.5
-Installer removes legacy files
+Version v2.0.4
+==============
+payment module fee for zc158a to 2.2.2 and PHP8.2 to PHP8.5
+This module allows Zen Cart stores to add a fee or a discount based on payment module selection.
 
-
-
-Version 2.0.3
-=============
-Compatible with Zen Cart 157d and ZC158a and PHP7.4 to PHP8.2
-Added version number to admin display
-includes group discounts and coupon credit notes
-BMH 2024-04-01 change (int) to (float) to allow discount amount < 1; allows fee < 1 ; allows decimal in discount value
-
-
+===================================================
 Changes to payment_module_fee 1.1.0 to make Version 2.0.0
 Compatible with Zen Cart 157d 158 and PHP7.4 to PHP8.2
-===================================================
-BMH 2020-11-06 update for PHP 7.4
-BMH update 2022-02-24
-    Update includes\modules\order_total\ot_paymentmodulefee.php
+2020-11-06 update for PHP 7.4
+2022-02-24 Update includes\modules\order_total\ot_paymentmodulefee.php
         to function __construct() { 
-    on line 14
-    change includes\templates\bmh_bootstrap\auto_loaders\loader_ot_paymentmodulefee.php to use  jscript\jquery.min.js which is the latest jquery version (from 1.6)
-
+        change includes\templates\bmh_bootstrap\auto_loaders\loader_ot_paymentmodulefee.php to use  jscript\jquery.min.js which is the latest jquery version (from 1.6)
 2022-09-06  lns 75 76 include postage costs so fee is on total cost
 2022-09-06  PHP 8.1.9 compatible; skip value for TEXT_UNKNOWN_TAX_RATE
 2022-09-15  PHP 8.0 no-numeric ln35 
@@ -37,6 +24,6 @@ BMH update 2022-02-24
 2023-05-14  include coupons and group discount; added version for admin display
 2023-05-15  initialise group_discountfee
 2024-04-01  change (int) to (float) to allow discount amt < 1
-2024-04-03  allow for no value set for coupon and discount fee [Scott Wilson email 2024-04-03]
-2026-06-14  encapsulated version only; Installer removes legacy files
-
+2024-04-03  allow for no value set for coupon and discoutn fee [Scott Wilson email 2024-04-03]
+2026-06-14  Encapsulated version only. Compatible with Zen Cart 1.5.8a to 2.2.2; PHP 8.2 to 8.5
+            Installer removes legacy files
