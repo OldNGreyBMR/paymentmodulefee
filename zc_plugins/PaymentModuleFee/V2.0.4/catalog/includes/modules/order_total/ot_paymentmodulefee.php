@@ -12,10 +12,7 @@
 // BMH 2023-05-14  include coupons and group discount; added version for admin display
 // BMH 2023-05-15  initialise group_discountfee
 // BMH 2024-04-01 ln105, 112, 121 change (int) to (float) to allow discount amt < 1
-<<<<<<< Updated upstream
-=======
 // BMH 2024-04-03 ln122 allow for no value set for coupon and discoutn fee [Scott Wilson email 2024-04-03]
->>>>>>> Stashed changes
 
  if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER')) {
     define('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER', '') ;
@@ -23,11 +20,7 @@
  if (!defined('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES')) {
      define('MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_PAYMENT_MODULES', '') ;
  }
-<<<<<<< Updated upstream
-if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.3');}
-=======
 if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.4');}
->>>>>>> Stashed changes
 
   class ot_paymentmodulefee {
     public $check_query;            //
@@ -92,7 +85,7 @@ if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.4');}
         }
         if (isset($_SESSION['payment'])) {  // BMH continue as payment type selected avoids PHP 8.0 error
 
-          if (($pass  == true) && in_array($_SESSION['payment'], $this->payment_modules)) { // BMH
+            if (($pass  == true) && in_array($_SESSION['payment'], $this->payment_modules)) { // BMH
           $charge_it = 'true';
           if ($charge_it == 'true') {
             $tax_address = zen_get_tax_locations();
@@ -179,7 +172,7 @@ if (!defined('VERSION_PMF')) { define('VERSION_PMF', '2.0.4');}
     }
 
     function install() {
-      global $db;
+        global $db;
       $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('This module is installed', 'MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_STATUS', 'true', '', '6', '1','zen_cfg_select_option(array(\'true\'), ', now())");
       $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort Order', 'MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_SORT_ORDER', '500', 'Sort order of display.', '6', '2', now())");
       $db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Allow Payment Module Fee', 'MODULE_ORDER_TOTAL_PAYMENTMODULEFEE_FEE_ALLOW', 'false', 'Do you want to allow payment module fees?', '6', '3', 'zen_cfg_select_option(array(\'true\', \'false\'), ', now())");
