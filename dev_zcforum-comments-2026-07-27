@@ -1,0 +1,8 @@
+PaymentFee module
+comments
+
+What versions of; Zen cart; PHP and ot_PaymentModuleFee are you running?
+What value have you configured in ot_PaymentModuleFee for the discount?
+
+In my old zc158a on PHP8.3 with a modified clone of Bootstrap template, ot_PaymentModuleFee v2.0.4 non plugin install, the discount shows with a - sign.
+The same in zc222 with PHP 8.5 with a clone of Bootstrap template, ot_PaymentModuleFee v2.0.4 plugin install.

@@ -27,3 +27,5 @@ Compatible with Zen Cart 157d 158 and PHP7.4 to PHP8.2
 2024-04-03  allow for no value set for coupon and discoutn fee [Scott Wilson email 2024-04-03]
 2026-06-14  Encapsulated version only. Compatible with Zen Cart 1.5.8a to 2.2.2; PHP 8.2 to 8.5
             Installer removes legacy files
+
+2026-07-28  v2.0.5 Fully encapsulated with installer to remove legacy files (corrected); removed redundant lines; placement of '-' sign before '$' sign to match ot_coupon.php;  tidy code 
