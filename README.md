@@ -1,7 +1,7 @@
 Version v2.0.5
 ==============
-payment module fee for zc158a to 2.2.2 and PHP8.2 to PHP8.5
-This module allows Zen Cart stores to add a fee or a discount based on payment module selection.
+payment module fee for zc158a to 2.2.2 and PHP8.2 to PHP8.5  
+This module allows Zen Cart stores to add a fee or a discount based on payment module selection.  
 
 2020 Changes to payment_module_fee 1.1.0 to make Version 2.0.0 Compatible with Zen Cart 157d 158 and PHP7.4 to PHP8.2
 2020-11-06 update for PHP 7.4
