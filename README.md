@@ -10,4 +10,3 @@ The module follows the original concept and discounts or adds surcharge on the t
     This will apply a tax of 10% to the discount making the discount shown as -3% inc.  
     The final tax amount on the order includes the tax on the discount or surcharge.  
     The final total includes the discount or surcharge.  
-~~~
